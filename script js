@@ -1,0 +1,40 @@
+const defaultPosts = [
+    { id: 1, author: "Sarah Jenkins", handle: "sarah_j", avatar: "👩‍💻", text: "Launched my script! 🎉", image: "https://unsplash.com", timestamp: "2h ago", likes: 24, hasLiked: false, comments: [{ author: "Alex_Dev", text: "Nice!" }] },
+    { id: 2, author: "Marcus Vance", handle: "marcus_v", avatar: "📷", text: "Sunrise run. 🌅", image: "https://unsplash.com", timestamp: "5h ago", likes: 12, hasLiked: false, comments: [] }
+];
+
+let posts = JSON.parse(localStorage.getItem('ms_posts')) || defaultPosts;
+const save = () => localStorage.setItem('ms_posts', JSON.stringify(posts));
+const isProf = window.location.pathname.includes('profile.html');
+const feed = document.getElementById('feedContainer');
+
+function render() {
+    if (!feed) return;
+    const disp = isProf ? posts.filter(p => p.handle === 'Alex_Dev') : posts;
+    feed.innerHTML = disp.map(p => `
+        <article class="post">
+            <div class="post-header">
+                <div class="post-header-left"><div class="post-avatar">${p.avatar}</div><div><h4>${p.author} <span>@${p.handle}</span></h4><span>${p.timestamp}</span></div></div>
+                ${p.handle === 'Alex_Dev' ? `<button onclick="del(\${p.id})">🗑️</button>` : ''}
+            </div>
+            <p>${p.text}</p>${p.image ? `<img src="\${p.image}" class="post-image">` : ''}
+            <div class="post-actions"><button class="action-btn ${p.hasLiked?'liked':''}" onclick="like(${p.id})">❤️ ${p.likes}</button><button class="action-btn">💬 ${p.comments.length}</button></div>
+            <div class="comments-section">
+                <div>${p.comments.map(c => `<div class="comment-item"><strong>c.author:</strong> {c.text}</div>`).join('')}</div>
+                <div class="comment-input-container"><input type="text" placeholder="Comment..." id="ci-${p.id}"><button class="comment-btn" onclick="comm(${p.id})">Send</button></div>
+            </div>
+        </article>`).join('') || '<p style="text-align:center;color:gray;">Empty feed.</p>';
+    if (document.getElementById('postsCount')) document.getElementById('postsCount').innerText = posts.filter(p => p.handle === 'Alex_Dev').length;
+}
+
+window.like = id => { const p = posts.find(x => x.id === id); p.hasLiked ? (p.likes--, p.hasLiked = false) : (p.likes++, p.hasLiked = true); save(); render(); };
+window.comm = id => { const i = document.getElementById(`ci-${id}`), t = i.value.trim(); if(t) { posts.find(x => x.id === id).comments.push({ author: "Alex_Dev", text: t }); save(); render(); } };
+window.del = id => { if (confirm("Delete?")) { posts = posts.filter(x => x.id !== id); save(); render(); } };
+
+const f = document.getElementById('postForm');
+if (f) f.addEventListener('submit', e => {
+    e.preventDefault();
+    posts.unshift({ id: Date.now(), author: "Alex Rivera", handle: "Alex_Dev", avatar: "👤", text: document.getElementById('postText').value, image: document.getElementById('postImage').value || null, timestamp: "Just now", likes: 0, hasLiked: false, comments: [] });
+    save(); f.reset(); render();
+});
+render();
