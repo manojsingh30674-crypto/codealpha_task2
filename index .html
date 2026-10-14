@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniSocial</title><link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar"><div class="nav-container"><h1 onclick="location.href='index.html'">✨ MiniSocial</h1><nav class="nav-links"><a href="index.html" class="active">Home</a><a href="profile.html">Profile</a></nav></div></header>
+    <div class="main-container single-column"><main class="feed-section">
+        <form id="postForm" class="create-post-card">
+            <h3>Share Something</h3><textarea id="postText" placeholder="What's on your mind?" required rows="3"></textarea>
+            <div class="form-actions"><input type="url" id="postImage" placeholder="Optional image URL..."><button type="submit" class="submit-post-btn">Post</button></div>
+        </form>
+        <section class="feed-container" id="feedContainer"></section>
+    </main></div>
+    <script src="script.js"></script>
+</body>
+</html>
